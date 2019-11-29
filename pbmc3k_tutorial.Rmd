@@ -27,14 +27,15 @@ We start by reading in the data. The `Read10X` function reads in the output of t
 
 We next use the count matrix to create a `Seurat` object. The object serves as a container that contains both data (like the count matrix) and analysis (like PCA, or clustering results) for a single-cell dataset. For a technical discussion of the `Seurat` object structure, check out our [GitHub Wiki](https://github.com/satijalab/seurat/wiki). For example, the count matrix is stored in `pbmc[["RNA"]]@counts`.
 
+
 ```{r option-and-library}
 rm(list=ls())
 options(stringsAsFactors = F)
 library("Seurat")
 #library(dplyr)
-library("Matrix") # provides Formal class 'dgCMatrix', representing sparse Matrix
-library("readr")
-library("magrittr")
+library("Matrix") # provides formal class 'dgCMatrix', representing sparse Matrix
+library("readr") # provides fast read_tsv to read the large table.
+library("magrittr") # provides snazzy pipeline operation
 ```
 
 
@@ -59,7 +60,7 @@ for (i in seq_along(metadata_attributes)){
     scan(file = input_file, skip = i -1, nlines = 1, sep = "\t", what = "")[-1]
 }
 
-expression_table <- 
+expression_matrix <- 
   read_tsv(file = input_file, col_names = F, skip = length(metadata_attributes)) %>%
   data.frame(., row.names = 1) %>%
   as.data.frame(.) %>%
@@ -68,8 +69,8 @@ expression_table <-
   data.matrix(.) %>%
   Matrix(., sparse = TRUE)
 
-# object.size(expression_table)
-mydata <- CreateSeuratObject(counts = expression_table,
+# object.size(expression_matrix)
+mydata <- CreateSeuratObject(counts = expression_matrix,
                              min.cells = 3,
                              min.features = 200,
                              project = favorite_project_name)
@@ -78,14 +79,33 @@ mydata
 ```
 
 
-```{r quality-control}
-# pbmc[["percent.mt"]] <- PercentageFeatureSet(object = pbmc, pattern = "^MT-")
-xx <- PercentageFeatureSet(object = mydata, pattern = "^MT-")
-sum(xx$nCount_RNA)
-str(xx)
+
+```{r mito, fig.height=7, fig.width=13}
+# The [[ operator can add columns to object metadata. This is a great place to stash QC stats
+mydata[["percent.mt"]] <- PercentageFeatureSet(object = mydata, pattern = "^MT-")
+sum(mydata[["percent.mt"]])
+```
+
+```{r qc1, fig.height=7, fig.width=13}
+# Show QC metrics for the first 5 cells
+head(x = mydata@meta.data, 5)
 ```
 
 
+
+```{r qc2, fig.height=7, fig.width=13}
+
+#Visualize QC metrics as a violin plot
+VlnPlot(object = mydata, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+# FeatureScatter is typically used to visualize feature-feature relationships, but can be used for anything calculated by the object, i.e. columns in object metadata, PC scores etc.
+
+plot1 <- FeatureScatter(object = mydata, feature1 = "nCount_RNA", feature2 = "percent.mt") 
+plot2 <- FeatureScatter(object = mydata, feature1 = "nCount_RNA", feature2 = "nFeature_RNA") 
+CombinePlots(plots = list(plot1,plot2))
+
+mydata <- subset(x = mydata, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+```
 
 
 ```{r init}
