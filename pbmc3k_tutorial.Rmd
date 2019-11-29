@@ -76,6 +76,8 @@ mydata <- CreateSeuratObject(counts = expression_matrix,
                              project = favorite_project_name)
 mydata
 
+first_ID <- sapply(colnames(expression_matrix), function(x) strsplit(x, "_")[[1]][1])
+table(first_ID)
 ```
 
 
@@ -88,7 +90,7 @@ sum(mydata[["percent.mt"]])
 
 ```{r qc1, fig.height=7, fig.width=13}
 # Show QC metrics for the first 5 cells
-head(x = mydata@meta.data, 5)
+head(x = mydata@meta.data, 10)
 ```
 
 
@@ -106,6 +108,26 @@ CombinePlots(plots = list(plot1,plot2))
 
 mydata <- subset(x = mydata, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
 ```
+
+
+```{r normalize}
+mydata <- NormalizeData(object = mydata, normalization.method = "LogNormalize", scale.factor = 1e4)
+# mydata[["RNA"]]@data
+```
+
+
+```{r var-features, fig.height=5, fig.width=11}
+mydata <- FindVariableFeatures(object = mydata, selection.method = 'vst', nfeatures = 2000)
+
+# Identify the 10 most highly variable genes
+top10 <- head(x = VariableFeatures(object = mydata), 10)
+
+# plot variable features with and without labels
+plot1 <- VariableFeaturePlot(object = mydata)
+plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
+CombinePlots(plots = list(plot1, plot2))
+```
+
 
 
 ```{r init}
