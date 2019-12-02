@@ -79,6 +79,14 @@ mydata
 first_ID <- sapply(colnames(expression_matrix), function(x) strsplit(x, "_")[[1]][1])
 table(first_ID)
 ```
+```{r}
+lymph_nodes <- metadata_list[["Lymph_node"]]
+sample_names <- metadata_list[["sample_names"]]
+combined_lymph_samples <- paste(lymph_nodes, sample_names, sep = "-")
+first_lymph_ID <- sapply(combined_lymph_samples, function(x) strsplit(x, "_")[[1]][1])
+table(first_lymph_ID)
+length(table(first_lymph_ID))
+```
 
 
 
@@ -216,7 +224,7 @@ mydata <- RunUMAP(object = mydata, dims = 1:10)
 
 ```{r tsneplot, fig.height=5, fig.width=7}
 # note that you can set `label = TRUE` or use the LabelClusters function to help label individual clusters
-DimPlot(object = mydata, reduction = 'umap')
+DimPlot(object = mydata, label = TRUE, reduction = 'umap')
 ```
 
 You can save the object at this point so that it can easily be loaded back in without having to rerun the computationally intensive steps performed above, or easily shared with collaborators.
