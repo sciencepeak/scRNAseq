@@ -1,0 +1,16 @@
+	HN28_P15_D06_S330_comb	HN28_P6_G05_S173_comb	HN26_P14_D11_S239_comb	HN26_P14_H05_S281_comb	HN26_P25_H09_S189_comb	HN26_P14_H06_S282_comb	HN25_P25_C04_S316_comb
+processed by Maxima enzyme	1	1	1	1	1	1	1
+Lymph node	1	0	1	1	1	1	1
+classified  as cancer cell	0	0	1	0	1	1	1
+classified as non-cancer cells	1	1	0	1	0	0	0
+non-cancer cell type	Fibroblast	Fibroblast	0	Fibroblast	0	0	0
+'C9orf152'	0	0	0.42761	0	0	0	0
+'RPS11'	6.0037	7.3006	7.2885	0	7.4742	6.9548	5.9743
+'ELMO2'	0	0	0	5.2465	0.50487	0	0
+'CREB3L1'	0	0	0	0	0	0	0
+'PNMA1'	5.1474	5.3329	2.8337	5.7507	0.19661	1.9949	0
+'MMP2'	0	0	0	0	0.36065	0	0
+'TMEM216'	0	0	3.604	4.9978	0	0	0
+'TRAF3IP2-AS1'	0.29983	0.59072	0.13093	3.2842	0.16092	0.10299	0.99494
+'LRRC37A5P'	0	0	0	0	0	0	0
+'LOC653712'	0	0	0	0	0	0	0

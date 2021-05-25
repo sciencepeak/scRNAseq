@@ -250,6 +250,7 @@ cluster5.markers <- FindMarkers(object = mydata, ident.1 = 5, ident.2 = c(0, 3),
 head(x = cluster5.markers, n = 5)
 # find markers for every cluster compared to all remaining cells, report only the positive ones
 mydata.markers <- FindAllMarkers(object = mydata, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+# all markers can be saved to a local file to see the genes.
 mydata.markers %>% group_by(cluster) %>% top_n(n = 2, wt = avg_logFC)
 ```
 
